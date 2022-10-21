@@ -5,8 +5,12 @@ import ContactList from 'components/ContactList/ContactList';
 import Filter from 'components/Filter/Filter';
 import Section from "components/Section/Section";
 import { nanoid } from 'nanoid';
-// import Notification from "components/Notification/Notification";
+import Notification from "components/Notification/Notification";
 import Contacts from "components/Contacts/Contacts"; 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify'; 
+
 
 export default function App() {
 
@@ -66,8 +70,17 @@ export default function App() {
             return newContacts
         })
          if (contactsFilter.length === 1) {
-            console.log("Hi");
-            setFilter("");
+             setFilter("");
+        toast.info('No more contacts matching the filter.', {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
         }
          
     }
@@ -76,14 +89,16 @@ export default function App() {
       <Container>
           <Section title="Phonebook">
             <ContactForm  onSubmit={addContact}/>
-      </Section>
-      <Contacts>
-        {/* {contacts.length === 0 ?
-         <Notification message="There is no contacts"></Notification> : } */}
-          <Section title="Contacts">
-           <Filter onChange={handleChange} filter={filter} />
-            <ContactList items={contactsFilter} removeContact={removeContact} />
           </Section>
+          <ToastContainer position="top-left" autoClose={3000} />
+      <Contacts>
+              {contacts.length ?
+                  <Section title="Contacts">
+                      <Filter onChange={handleChange} filter={filter} />
+                      <ContactList items={contactsFilter} removeContact={removeContact} />
+                  </Section> :
+                  <Notification message="There is no contacts"></Notification>
+              }
       </Contacts>
       </Container>
   )

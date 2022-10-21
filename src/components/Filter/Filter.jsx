@@ -21,6 +21,6 @@ export default function Filter({ onChange, filter }) {
 
 
 Filter.propTypes = {
-    onSubmit: PropTypes.func,
+    onChange: PropTypes.func,
     filter: PropTypes.string.isRequired,
 }
