@@ -1,11 +1,18 @@
-import {useState} from 'react';
-import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { Form, Input, Button } from './ContactForm.styled';
+import { useSelector, useDispatch } from "react-redux";
+import { getContacts } from 'redux/selectors';
+import { nanoid } from 'nanoid';
+import { useState } from 'react';
+import { addContact } from 'redux/contactsSlice';
+import { toast } from 'react-toastify';
 
-export default function ContactForm({onSubmit}) {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
+export default function ContactForm() {
+const [name, setName] = useState("");
+const [number, setNumber] = useState("");
+
+const contacts = useSelector(getContacts);
+const dispatch = useDispatch();
 
   const nameId = nanoid();
   const numberId = nanoid();
@@ -26,33 +33,48 @@ export default function ContactForm({onSubmit}) {
     }
   }
   
-  // const handleChangeName = (evt) => {
-  //       const { value } = evt.target;
-  //       setName(value)
-  // }
-  
-  // const handleChangeNumber = (evt) => {
-  //       const { value } = evt.target;
-  //       setNumber(value)
-  // }
-  
   const handleSubmit = (evt) => {
         evt.preventDefault();
-        onSubmit({ name, number });
+        onAddContact({ name, number });
         setName("");
         setNumber("");
     }
 
+
+const onAddContact = (contact) => {
+        if (inDuplicate(contact)) {
+          return   toast.warn(`${contact.name}  is already in contacts.`, {
+        position: "top-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+    
+     const action = addContact(contact);
+      dispatch(action);
+  }
+  
+    const inDuplicate = ({name, number }) => {
+      const result = contacts.find((item) => item.name === name && item.number === number);
+        return result;
+    }
+
   return (
     <Form onSubmit={handleSubmit}>
-         
+        
          <label htmlFor={nameId}>Name</label>
          <Input
           id={nameId}
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+          title="Name may contain only letters, apostrophe, dash and spaces. 
+          For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           value={name}
           onChange={handleChange}

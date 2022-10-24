@@ -2,9 +2,11 @@ import React from 'react';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { Input } from './Filter.styled';
+import { getFilter } from 'redux/selectors';
+import { useSelector } from "react-redux";
 
-export default function Filter({ onChange, filter }) {
-
+export default function Filter({onChange}) {
+  const filter = useSelector(getFilter);
   const filterId = nanoid();
   return (
       <div>
@@ -19,8 +21,6 @@ export default function Filter({ onChange, filter }) {
     )
 }
 
-
 Filter.propTypes = {
     onChange: PropTypes.func,
-    filter: PropTypes.string.isRequired,
 }
